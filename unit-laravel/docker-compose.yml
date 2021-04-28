@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  myproject:
+    image: rginnow/laravel-unit:v1.0-php7.3
+    restart: always
+    volumes:
+      - "./app:/www/app"
+
+#networks:
+#  default:
+#    external:
+#      name: nginx-reverse-proxy

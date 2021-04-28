@@ -1,0 +1,39 @@
+FROM nginx/unit:1.21.0-full
+
+# Set webserver directory
+RUN mkdir /www
+
+# Get files set up and copied in
+COPY config/* /docker-entrypoint.d/
+COPY scripts/* /tmp/scripts/
+
+# Update and add in the php modules
+# clean list at the end
+RUN apt update && apt -y install \
+    build-essential \
+    php-curl \
+    php-bcmath \
+    php-mbstring \
+    php-mysql \
+    php-xml \
+    php-zip \
+    && rm -rf /var/lib/apt/lists/*
+
+# NVM (NodeJS, NPM)
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash \
+    && export NVM_DIR="$HOME/.nvm" \
+    && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" \
+    && [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion" \
+    && nvm install v14.15.5
+
+# Install Composer from the suggested script
+# at https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
+RUN sh /tmp/scripts/composer.sh
+
+# Clean up remaining files
+RUN rm -rf /tmp/scripts
+RUN apt autoremove -y && apt clean -y
+
+# Expose required ports
+EXPOSE 80
+EXPOSE 443

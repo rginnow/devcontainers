@@ -1,0 +1,54 @@
+FROM nginx/unit:1.23.0-minimal
+
+# Set webserver directory
+RUN mkdir /www
+
+# Get files set up and copied in
+COPY config/* /docker-entrypoint.d/
+COPY scripts/* /tmp/scripts/
+
+# Run an update and get some required modules
+# to allow addition of Sury PHP PPA
+RUN apt update && apt -y install \
+    build-essential \
+    lsb-release \
+    apt-transport-https \
+    ca-certificates \
+    wget \
+    gnupg1
+
+# Get the gpg and add the Sury PHP PPA
+# in order to get PHP 8.0 modules
+RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/sury-php.list
+RUN wget -qO - https://packages.sury.org/php/apt.gpg | apt-key add -
+
+# Add in the php modules
+RUN apt update && apt -y install \
+    php8.0 \
+    php8.0-curl \
+    php8.0-bcmath \
+    php8.0-mbstring \
+    php8.0-mysql \
+    php8.0-xml \
+    php8.0-zip
+
+# NVM (NodeJS, NPM)
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash \
+    && export NVM_DIR="$HOME/.nvm" \
+    && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" \
+    && [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion" \
+    && nvm install v14.15.5
+
+# Install Composer from the suggested script
+# at https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
+RUN sh /tmp/scripts/composer.sh
+
+# Clean up remaining files
+RUN rm -rf /tmp/scripts
+RUN apt autoremove -y && apt clean -y \
+    && apt remove -y apt-transport-https gnupg1 wget lsb-release \
+    && rm -rf /var/lib/apt/lists/*
+
+# Expose required ports
+EXPOSE 80
+EXPOSE 443

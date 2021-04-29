@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  myproject:
+    image: nginx:stable-alpine
+    restart: always
+    volumes:
+      - "./app/public:/usr/share/nginx/html"
+    expose:
+      - 80
+      - 443
+
+#networks:
+#  default:
+#    external:
+#      name: nginx-reverse-proxy

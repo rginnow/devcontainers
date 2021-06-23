@@ -11,8 +11,9 @@ COPY scripts/* /tmp/scripts/
 # clean list at the end
 RUN apt update && apt -y install \
     build-essential \
-    php-curl \
     php-bcmath \
+    php-curl \
+    php-dom \
     php-mbstring \
     php-mysql \
     php-xml \

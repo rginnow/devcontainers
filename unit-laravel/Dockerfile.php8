@@ -25,8 +25,9 @@ RUN wget -qO - https://packages.sury.org/php/apt.gpg | apt-key add -
 # Add in the php modules
 RUN apt update && apt -y install \
     php8.0 \
-    php8.0-curl \
     php8.0-bcmath \
+    php8.0-curl \
+    php8.0-dom \
     php8.0-mbstring \
     php8.0-mysql \
     php8.0-sqlite3 \

@@ -16,6 +16,7 @@ RUN apt update && apt -y install \
     php-dom \
     php-mbstring \
     php-mysql \
+    php-sqlite3 \
     php-xml \
     php-zip \
     && rm -rf /var/lib/apt/lists/*

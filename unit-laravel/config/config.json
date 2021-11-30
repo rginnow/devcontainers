@@ -24,6 +24,7 @@
     "applications": {
         "laravel": {
             "type": "php",
+            "processes": 4,
             "user": "www-data",
             "group": "www-data",
             "root": "/www/app/public/",

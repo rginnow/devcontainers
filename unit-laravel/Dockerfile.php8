@@ -1,4 +1,4 @@
-FROM nginx/unit:1.23.0-minimal
+FROM nginx/unit:1.26.0-php8.0
 
 # Set webserver directory
 RUN mkdir /www
@@ -19,20 +19,29 @@ RUN apt update && apt -y install \
 
 # Get the gpg and add the Sury PHP PPA
 # in order to get PHP 8.0 modules
-RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/sury-php.list
-RUN wget -qO - https://packages.sury.org/php/apt.gpg | apt-key add -
+# RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/sury-php.list
+# RUN wget -qO - https://packages.sury.org/php/apt.gpg | apt-key add -
 
 # Add in the php modules
-RUN apt update && apt -y install \
-    php8.0 \
-    php8.0-bcmath \
-    php8.0-curl \
-    php8.0-dom \
-    php8.0-mbstring \
-    php8.0-mysql \
-    php8.0-sqlite3 \
-    php8.0-xml \
-    php8.0-zip
+# RUN apt update && apt -y install \
+    # php8.0 \
+    # php8.0-bcmath \
+    # php8.0-curl \
+    # php8.0-dom \
+    # php8.0-mbstring \
+    # php8.0-mysql \
+    # php8.0-sqlite3 \
+    # php8.0-xml \
+    # php8.0-zip
+
+RUN apt update && \
+    docker-php-ext-install bcmath && \
+    # docker-php-ext-install dom && \
+    # docker-php-ext-install mbstring && \
+    docker-php-ext-install pdo pdo_mysql
+    # docker-php-ext-install sqlite3 && \
+    # docker-php-ext-install xml && \
+    # docker-php-ext-install zip
 
 # NVM (NodeJS, NPM)
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash \
